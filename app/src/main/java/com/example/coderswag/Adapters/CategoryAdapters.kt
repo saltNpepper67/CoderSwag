@@ -19,24 +19,36 @@ class CategoryAdapters(context: Context, categories: List<Category>) : BaseAdapt
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         //declare a View type variable named categoryVoew
         val categoryView : View // variable that is a View type
+        val holder : ViewHolder
         //then initialize categoryView which evaluates to LayoutInflater
         // using methods from and inflate, where from is context and inflate is the object
         // to be inflated. the item to be inflated is category_list_item.xml which has
         // 2 widgets, a TextView and an ImageView
-        categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item,null)
+
+        if (convertView == null){
+            holder = ViewHolder()
+            categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item,null)
+            holder.categoryImage = categoryView.findViewById(R.id.categoryimageViewHats)
+            holder.categoryName = categoryView.findViewById(R.id.categoryNameHats)
+            println("I run for the first time....")
+            categoryView.tag = holder
+        }else{
+            holder = convertView.tag as ViewHolder
+            categoryView = convertView
+            println("recycling ...................")
+        }
+
 
         //after declaring the above xml file resource, create a variable declaration
         //for 2 widgets it contained, the textView and imageView.
 
-        val categoryImage: ImageView = categoryView.findViewById(R.id.categoryimageViewHats)
-        val categoryName: TextView = categoryView.findViewById(R.id.categoryNameHats)
+
 
         val category = categories[position]//category is equauak to categories array output form List<Category> class constructor
 
-        categoryName.text = category.title // this line will decode the text title and display it
         val resourceID = context.resources.getIdentifier(category.image,"drawable", context.packageName)
-        categoryImage.setImageResource(resourceID)
-
+        holder.categoryImage?.setImageResource(resourceID)
+        holder.categoryName?.text = category.title // this line will decode the text title and display it
 
         return categoryView
     }
@@ -51,5 +63,10 @@ class CategoryAdapters(context: Context, categories: List<Category>) : BaseAdapt
 
     override fun getCount(): Int {
         return categories.count()
+    }
+
+    private class ViewHolder{
+        var categoryImage: ImageView? = null
+        var categoryName: TextView? = null
     }
 }
